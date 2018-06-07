@@ -15,6 +15,13 @@ class FinancialSummary
     new(user, currency, report_begins_at)
   end
 
+  def self.seven_days(args)
+    user = args[:user]
+    currency = args[:currency]
+    report_begins_at = Date.today - 7.days
+    new(user, currency, report_begins_at)
+  end
+
   def initialize(user, currency, report_begins_at)
     @currency = currency
     since_date = Transaction.arel_table[:created_at].gt(report_begins_at)
