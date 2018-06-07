@@ -22,11 +22,19 @@ class FinancialSummary
     new(user, currency, report_begins_at)
   end
 
+  def self.lifetime(args)
+    user = args[:user]
+    currency = args[:currency]
+    new(user, currency, nil)
+  end
+
   def initialize(user, currency, report_begins_at)
     @currency = currency
     since_date = Transaction.arel_table[:created_at].gt(report_begins_at)
     @query = Transaction.where(user: user, amount_currency: currency.to_s.upcase)
-                        .where(since_date)
+    if report_begins_at
+      @query = @query.where(since_date)
+    end
   end
 
   def count(category)
