@@ -1,9 +1,16 @@
 require 'rails_helper'
 
 describe FinancialSummary do
-  it 'summarizes over one day' do
-    pending('Not implemented yet')
 
+  it 'requires user'
+  it 'requires currency'
+  it 'only uses the correct currency'
+  it 'works with zero records'
+  it 'respects beginning of calendar day/week'
+  it 'respects end of calendar day/week'
+  it 'respects different users'
+
+  it 'summarizes over one day' do
     user = create(:user)
 
     Timecop.freeze(Time.now) do
