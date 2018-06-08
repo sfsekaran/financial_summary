@@ -1,5 +1,15 @@
 require 'rails_helper'
 
+#
+# Notes:
+#
+# normally I'd have two levels of nesting (and no more than that)
+# and I would use a bunch of `let()` and `before`, etc.
+# but this time I decided to refactor the tests using shared examples
+#
+# it ended up being a bit quicker to write and it's less nested feeling
+#
+
 shared_examples "reporting basics" do |method|
   it 'requires a user' do
     expect{FinancialSummary.send(method, currency: :usd)}.to raise_error(ArgumentError)
@@ -70,8 +80,6 @@ describe FinancialSummary do
   end
 
   it 'summarizes over seven days' do
-    user = create(:user)
-
     Timecop.freeze(5.days.ago) do
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(2.12, :usd))
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(10, :usd))
@@ -87,8 +95,6 @@ describe FinancialSummary do
   end
 
   it 'summarizes over lifetime' do
-    user = create(:user)
-
     Timecop.freeze(30.days.ago) do
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(2.12, :usd))
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(10, :usd))

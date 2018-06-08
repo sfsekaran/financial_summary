@@ -4,8 +4,6 @@
 # Summarizes transactions by day, week, and lifetime.
 #
 class FinancialSummary
-  # MAYBE: move this class into a service folder?
-
   def self.one_day(user:, currency:)
     report_begins_at = Date.today
     new(user, currency, report_begins_at)
