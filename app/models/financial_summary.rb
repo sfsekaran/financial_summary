@@ -6,19 +6,19 @@
 class FinancialSummary
   # TODO: refactor class methods to be DRY (there will of course be repetition)
   # TODO: refator into query object
-  # TODO: move this class into a service folder
+  # MAYBE: move this class into a service folder?
 
-  def self.one_day(user: nil, currency: nil)
+  def self.one_day(user:, currency:)
     report_begins_at = Date.today
     new(user, currency, report_begins_at)
   end
 
-  def self.seven_days(user: nil, currency: nil)
-    report_begins_at = 7.days.ago
+  def self.seven_days(user:, currency:)
+    report_begins_at = Date.today - 7.days
     new(user, currency, report_begins_at)
   end
 
-  def self.lifetime(user: nil, currency: nil)
+  def self.lifetime(user:, currency:)
     new(user, currency, nil)
   end
 

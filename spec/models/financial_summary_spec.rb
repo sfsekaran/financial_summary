@@ -1,17 +1,63 @@
 require 'rails_helper'
 
-describe FinancialSummary do
+shared_examples "reporting basics" do |method|
+  it 'requires a user' do
+    expect{FinancialSummary.send(method, currency: :usd)}.to raise_error(ArgumentError)
+  end
 
-  it 'requires user'
-  it 'requires currency'
-  it 'only uses the correct currency'
-  it 'respects different users'
+  it 'requires currency' do
+    expect{FinancialSummary.send(method, user: user)}.to raise_error(ArgumentError)
+  end
+
+  it 'respects the correct currency' do
+    Timecop.freeze(Time.now) do
+      create(:transaction, user: user, category: :deposit, amount: Money.from_amount(2.12, :usd))
+      create(:transaction, user: user, category: :deposit, amount: Money.from_amount(12.50, :cad))
+    end
+
+    subject = FinancialSummary.send(method, user: user, currency: :cad)
+
+    expect(subject.amount(:deposit)).to eq(Money.from_amount(12.50, :cad))
+    expect(subject.count(:deposit)).to eq(1)
+  end
+
+  it 'respects the correct user' do
+    second_user = create(:user)
+
+    Timecop.freeze(Time.now) do
+      create(:transaction, user: user, category: :deposit, amount: Money.from_amount(2.12, :usd))
+      create(:transaction, user: second_user, category: :deposit, amount: Money.from_amount(12.50, :usd))
+    end
+
+    subject = FinancialSummary.send(method, user: user, currency: :usd)
+    expect(subject.amount(:deposit)).to eq(Money.from_amount(2.12, :usd))
+    expect(subject.count(:deposit)).to eq(1)
+  end
+
+  it 'respects the correct category' do
+    Timecop.freeze(Time.now) do
+      create(:transaction, user: user, category: :withdraw, amount: Money.from_amount(1.23, :usd))
+      create(:transaction, user: user, category: :deposit, amount: Money.from_amount(12.50, :cad))
+    end
+
+    subject = FinancialSummary.send(method, user: user, currency: :usd)
+
+    expect(subject.amount(:withdraw)).to eq(Money.from_amount(1.23, :usd))
+    expect(subject.count(:withdraw)).to eq(1)
+  end
+end
+
+describe FinancialSummary do
+  let(:user) { create(:user) }
+
   it 'respects beginning of calendar day/week'
   it 'respects end of calendar day/week'
 
-  it 'summarizes over one day' do
-    user = create(:user)
+  it_behaves_like "reporting basics", :one_day
+  it_behaves_like "reporting basics", :seven_days
+  it_behaves_like "reporting basics", :lifetime
 
+  it 'summarizes over one day' do
     Timecop.freeze(Time.now) do
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(2.12, :usd))
       create(:transaction, user: user, category: :deposit, amount: Money.from_amount(10, :usd))
