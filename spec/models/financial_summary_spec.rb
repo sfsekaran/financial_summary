@@ -50,9 +50,6 @@ end
 describe FinancialSummary do
   let(:user) { create(:user) }
 
-  it 'respects beginning of calendar day/week'
-  it 'respects end of calendar day/week'
-
   it_behaves_like "reporting basics", :one_day
   it_behaves_like "reporting basics", :seven_days
   it_behaves_like "reporting basics", :lifetime
