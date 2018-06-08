@@ -8,23 +8,17 @@ class FinancialSummary
   # TODO: refator into query object
   # TODO: move this class into a service folder
 
-  def self.one_day(args)
-    user = args[:user]
-    currency = args[:currency]
+  def self.one_day(user: nil, currency: nil)
     report_begins_at = Date.today
     new(user, currency, report_begins_at)
   end
 
-  def self.seven_days(args)
-    user = args[:user]
-    currency = args[:currency]
+  def self.seven_days(user: nil, currency: nil)
     report_begins_at = Date.today - 7.days
     new(user, currency, report_begins_at)
   end
 
-  def self.lifetime(args)
-    user = args[:user]
-    currency = args[:currency]
+  def self.lifetime(user: nil, currency: nil)
     new(user, currency, nil)
   end
 

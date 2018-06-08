@@ -5,10 +5,9 @@ describe FinancialSummary do
   it 'requires user'
   it 'requires currency'
   it 'only uses the correct currency'
-  it 'works with zero records'
+  it 'respects different users'
   it 'respects beginning of calendar day/week'
   it 'respects end of calendar day/week'
-  it 'respects different users'
 
   it 'summarizes over one day' do
     user = create(:user)
