@@ -14,7 +14,7 @@ class FinancialSummary
   end
 
   def self.seven_days(user: nil, currency: nil)
-    report_begins_at = Date.today - 7.days
+    report_begins_at = 7.days.ago
     new(user, currency, report_begins_at)
   end
 
