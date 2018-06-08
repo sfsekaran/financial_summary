@@ -4,8 +4,6 @@
 # Summarizes transactions by day, week, and lifetime.
 #
 class FinancialSummary
-  # TODO: refactor class methods to be DRY (there will of course be repetition)
-  # TODO: refator into query object
   # MAYBE: move this class into a service folder?
 
   def self.one_day(user:, currency:)
@@ -24,11 +22,8 @@ class FinancialSummary
 
   def initialize(user, currency, report_begins_at)
     @currency = currency
-    since_date = Transaction.arel_table[:created_at].gt(report_begins_at)
     @query = Transaction.where(user: user, amount_currency: currency.to_s.upcase)
-    if report_begins_at
-      @query = @query.where(since_date)
-    end
+    @query = CreatedSinceQuery.new(@query, report_begins_at).relation
   end
 
   def count(category)
